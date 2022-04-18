@@ -209,7 +209,7 @@ Sub Usage
     Print "This program parses a WD ROM, extracts PCMBlocks and ROYL modules, and "
     Print "tests their integrity. Compressed PCMBlocks will be saved as big-endian."
     Print
-    Print "Usage:  vdrom [-v[erbose]] ROM_filename"
+    Print "Usage:  wdrom [-v[erbose]] ROM_filename"
     Print
     Print " Example1:  wdrom ROM.bin"
     Print " Example2:  wdrom -v ROM.bin"
@@ -930,9 +930,9 @@ Offset(h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 
             If k = 0 Then
             
-                sModFil = s000BmodDir & Hex( wdModID, 4) & ".bin"
+                sModFil = s000BmodDir & sPathSep & Hex( wdModID, 4) & ".bin"
             Else
-                sModFil = s020BmodDir & Hex( wdModID, 4) & ".bin"
+                sModFil = s020BmodDir & sPathSep & Hex( wdModID, 4) & ".bin"
             
             End If
 
