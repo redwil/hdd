@@ -10,6 +10,21 @@
 
 
 #include once "vbcompat.bi"
+'General stuff
+'base rev as the imported from the author.
+dim sProgramMajorRev as String = "17"
+dim sProgramMinorRev as String = "0"
+
+'NIX style path sep
+Dim sPathSep as String = "\"
+#ifdef __FB_UNIX__
+sPathSep = "/"
+#endif
+
+'ROM modules and PCM block directory names
+dim s000BmodDir as String
+dim s020BmodDir as String
+dim sPCMBlockDir as String
 
 Dim bVerbose As uByte                   ' flag which selects verbose output mode, 1 = verbose
 Dim dwROMsize As uLong                  ' ROM file size in bytes
@@ -194,10 +209,10 @@ Sub Usage
     Print "This program parses a WD ROM, extracts PCMBlocks and ROYL modules, and "
     Print "tests their integrity. Compressed PCMBlocks will be saved as big-endian."
     Print
-    Print "Usage:  WDROMV17 [-v[erbose]] ROM_filename"
+    Print "Usage:  vdrom [-v[erbose]] ROM_filename"
     Print
-    Print " Example1:  WDROMV17 ROM.bin"
-    Print " Example2:  WDROMV17 -v ROM.bin"
+    Print " Example1:  wdrom ROM.bin"
+    Print " Example2:  wdrom -v ROM.bin"
     Print
     End
     
@@ -347,10 +362,14 @@ For j = 0 To &HFF
 		sFlashdir = ""
 		Continue For
 	Else
+		s000BmodDir = sFlashdir & sPathSep & "000Bmods"
+		s020BmodDir = sFlashdir & sPathSep & "020Bmods"
+		sPCMBlockDir = sFlashdir & sPathSep & "PCMBlock"
+		
 		Mkdir(  sFlashdir )
-		Mkdir(  sFlashdir & "\000Bmods" )
-		Mkdir(  sFlashdir & "\020Bmods" )
-		Mkdir(  sFlashdir & "\PCMBlock" )
+		Mkdir(  s000BmodDir )
+		Mkdir(  s020BmodDir )
+		Mkdir(  sPCMBlockDir )
 		Exit For
         
 	End If
@@ -366,8 +385,8 @@ If sFlashdir = "" Then
 Else
     sAnalysisFil = sFlashdir & "\ROManalysis.txt"
     Print
-    Print "ROM modules will be saved to "; sFlashdir ; "\000Bmods and "; sFlashdir ; "\020Bmods"
-    Print "PCMBlocks will be saved to "; sFlashdir ; "\PCMBlock"
+    Print "ROM modules will be saved to "; s000BmodDir ; " and "; s020BmodDir
+    Print "PCMBlocks will be saved to "; sPCMBlockDir
     Print "ROM analysis will be saved to "; sAnalysisFil
     
 End If
@@ -911,9 +930,9 @@ Offset(h) 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 
             If k = 0 Then
             
-                sModFil = sFlashdir & "\000Bmods\" & Hex( wdModID, 4) & ".bin"
+                sModFil = s000BmodDir & Hex( wdModID, 4) & ".bin"
             Else
-                sModFil = sFlashdir & "\020Bmods\" & Hex( wdModID, 4) & ".bin"
+                sModFil = s020BmodDir & Hex( wdModID, 4) & ".bin"
             
             End If
 
@@ -1030,7 +1049,7 @@ Print #af, "N/A  -  Not Applicable"
 Print #af, "BAD  -  Module has invalid checksum. This may be due to non-existent module."
 Print #af,
 
-Print #af, "ROM modules saved to "; sFlashdir; "\000Bmods and "; sFlashdir; "\020Bmods"
+Print #af, "ROM modules saved to "; s000BmodDir; " and "; s020BmodDir
 Print #af,
 
 ' Determine active directory (0x0B or 0x20B)
