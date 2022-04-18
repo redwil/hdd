@@ -293,6 +293,11 @@ Function dwSum32( dwFilptr As uLong Ptr, dwBuffsize As uLong ) As uLong
     
 End Function
 
+' Generate sFlashDir name
+' TODO: replace extention
+Function FlashDir(sFileName as String, idx as uByte) as String
+	return sFileName & "_" & Hex( idx, 2 )
+End Function
 
 ' Check command line for correct syntax, otherwise display usage information
 
@@ -355,7 +360,7 @@ End If
 
 For j = 0 To &HFF
     
-	sFlashdir = "Flash_" & Hex( j, 2 )
+	sFlashdir = FlashDir(sROMfilnam, j)
 
 	If Dir( sFlashdir, fbDirectory ) <> "" Then
         
@@ -380,15 +385,16 @@ Next j
 If sFlashdir = "" Then
     
     Print
-    Print "No spare Flash_nn directory  -  program aborted"
+    Print "No spare flash/rom _nn directory  -  program aborted"
     End
 Else
-    sAnalysisFil = sFlashdir & "\ROManalysis.txt"
-    Print
-    Print "ROM modules will be saved to "; s000BmodDir ; " and "; s020BmodDir
-    Print "PCMBlocks will be saved to "; sPCMBlockDir
-    Print "ROM analysis will be saved to "; sAnalysisFil
-    
+    sAnalysisFil = sFlashdir & sPathSep & "ROManalysis.txt"
+    Print "Anaysis in "; sFlashDir
+    if bVerbose Then
+	Print "ROM modules will be saved to "; s000BmodDir ; " and "; s020BmodDir
+	Print "PCMBlocks will be saved to "; sPCMBlockDir
+	Print "ROM analysis will be saved to "; sAnalysisFil
+    End If
 End If
 
 
